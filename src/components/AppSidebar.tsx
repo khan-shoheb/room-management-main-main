@@ -80,22 +80,6 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
-              {/* Super Admin Dashboard link for admin only */}
-              {userRole === "admin" && (
-                <SidebarMenuItem key="SuperAdminDashboard">
-                  <SidebarMenuButton asChild isActive={location.pathname === "/super-admin-dashboard"}>
-                    <NavLink
-                      to="/super-admin-dashboard"
-                      end
-                      className="hover:bg-sidebar-accent"
-                      activeClassName="bg-sidebar-accent text-sidebar-primary font-medium"
-                    >
-                      <UserCog className="mr-2 h-4 w-4" />
-                      {!collapsed && <span>Super Admin Dashboard</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

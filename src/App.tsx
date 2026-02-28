@@ -1,9 +1,12 @@
+import SuperAdminRestaurants from "./pages/SuperAdminRestaurants";
+import SuperAdminDashboard from "./pages/SuperAdminDashboard";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AdminLogin from "./pages/AdminLogin";
+import SuperAdminLogin from "./pages/SuperAdminLogin";
 import Index from "./pages/Index";
 import Billing from "./pages/Billing";
 import Payroll from "./pages/Payroll";
@@ -17,7 +20,6 @@ import NotFound from "./pages/NotFound";
 import RecipeManagement from "./pages/RecipeManagement";
 import AdminUsers from "./pages/AdminUsers";
 import MyProfile from "./pages/MyProfile";
-import SuperAdminDashboard from "./pages/SuperAdminDashboard";
 
 const queryClient = new QueryClient();
 
@@ -41,8 +43,14 @@ const App = () => (
         <Routes>
           <Route path="/admin-login" element={<AdminLogin />} />
           <Route path="/" element={
-            getRole() === "admin" ? <Index /> : <AdminLogin />
+            getRole() === "admin"
+              ? <Index />
+              : getRole() === "superadmin"
+                ? <SuperAdminDashboard />
+                : <AdminLogin />
           } />
+          <Route path="/admin-login" element={<AdminLogin />} />
+          <Route path="/superadmin-login" element={<SuperAdminLogin />} />
           <Route path="/billing" element={
             getRole() === "admin" ? <Billing /> : <AdminLogin />
           } />
@@ -76,9 +84,8 @@ const App = () => (
           <Route path="/my-profile" element={
             getRole() === "admin" ? <MyProfile /> : <AdminLogin />
           } />
-          <Route path="/super-admin-dashboard" element={
-            getRole() === "admin" ? <SuperAdminDashboard /> : <AdminLogin />
-          } />
+          <Route path="/superadmin-dashboard" element={<SuperAdminDashboard />} />
+          <Route path="/superadmin-restaurants" element={<SuperAdminRestaurants />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

@@ -29,13 +29,46 @@ const statusStyle: Record<string, string> = {
 };
 
 const Billing = () => {
+  const [splitModal, setSplitModal] = useState(false);
+  const [splitCount, setSplitCount] = useState(2);
+  const [payModal, setPayModal] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('Cash');
+
+  // Split Bill handler
+  const handleSplitBill = () => {
+    setSplitModal(true);
+  };
+  const handleSplitModalClose = () => {
+    setSplitModal(false);
+    setSplitCount(2);
+  };
+
+  // Pay Now handler
+  const handlePayNow = () => {
+    setPayModal(true);
+  };
+  const handlePayModalClose = () => {
+    setPayModal(false);
+    setPaymentMethod('Cash');
+  };
   const [selectedTable, setSelectedTable] = useState<number | null>(1);
   const [showInvoice, setShowInvoice] = useState(false);
+  const [currentBillItems, setCurrentBillItems] = useState(billItems);
+  const [tableBills, setTableBills] = useState(tables.map(t => t.bill));
   const invoiceRef = useRef<HTMLDivElement>(null);
-  const subtotal = billItems.reduce((s, i) => s + i.qty * i.price, 0);
+  const subtotal = currentBillItems.reduce((s, i) => s + i.qty * i.price, 0);
   const tax = Math.round(subtotal * 0.05);
   const total = subtotal + tax;
 
+  // New Bill handler
+  const handleNewBill = () => {
+    setCurrentBillItems([]);
+    if (selectedTable !== null) {
+      const updatedBills = [...tableBills];
+      updatedBills[selectedTable - 1] = 0;
+      setTableBills(updatedBills);
+    }
+  };
   // Print invoice
   const handlePrint = () => {
     if (invoiceRef.current) {
@@ -60,13 +93,46 @@ const Billing = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
+
+        {/* Split Bill Modal */}
+        {splitModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+            <div className="bg-white rounded-lg shadow-lg p-6 w-[350px] relative">
+              <button className="absolute top-2 right-2 text-gray-500 hover:text-black" onClick={handleSplitModalClose} aria-label="Close">×</button>
+              <h2 className="text-lg font-bold mb-4">Split Bill</h2>
+              <div className="mb-3">Total Bill: <b>₹{total}</b></div>
+              <label className="block mb-2">Split into how many parts?</label>
+              <input type="number" min="2" max="10" value={splitCount} onChange={e => setSplitCount(Number(e.target.value))} className="w-full border rounded px-2 py-1 mb-3" />
+              <div className="mb-3">Each person pays: <b>₹{Math.round(total/splitCount)}</b></div>
+              <button className="w-full bg-orange-500 text-white py-2 rounded" onClick={handleSplitModalClose}>Done</button>
+            </div>
+          </div>
+        )}
+
+        {/* Pay Now Modal */}
+        {payModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+            <div className="bg-white rounded-lg shadow-lg p-6 w-[350px] relative">
+              <button className="absolute top-2 right-2 text-gray-500 hover:text-black" onClick={handlePayModalClose} aria-label="Close">×</button>
+              <h2 className="text-lg font-bold mb-4">Pay Bill</h2>
+              <div className="mb-3">Total Amount: <b>₹{total}</b></div>
+              <label className="block mb-2">Select Payment Method:</label>
+              <select value={paymentMethod} onChange={e => setPaymentMethod(e.target.value)} className="w-full border rounded px-2 py-1 mb-3">
+                <option value="Cash">Cash</option>
+                <option value="Card">Card</option>
+                <option value="UPI">UPI</option>
+              </select>
+              <button className="w-full bg-orange-500 text-white py-2 rounded" onClick={handlePayModalClose}>Confirm Payment</button>
+            </div>
+          </div>
+        )}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">Billing</h1>
             <p className="text-muted-foreground">Manage table bills and payments</p>
           </div>
           <div className="flex gap-2">
-            <Button className="gradient-warm text-primary-foreground gap-2">
+            <Button className="gradient-warm text-primary-foreground gap-2" onClick={handleNewBill}>
               <Plus className="h-4 w-4" /> New Bill
             </Button>
             <Button variant="outline" className="gap-2" onClick={() => setShowInvoice(true)}>
@@ -113,7 +179,10 @@ const Billing = () => {
                   {tables.map((table) => (
                     <button
                       key={table.id}
-                      onClick={() => setSelectedTable(table.id)}
+                      onClick={() => {
+                        setSelectedTable(table.id);
+                        setCurrentBillItems(billItems); // Reset to default items for demo
+                      }}
                       className={`p-4 rounded-lg border-2 text-center transition-all hover:scale-105 ${
                         selectedTable === table.id
                           ? "border-primary shadow-elevated"
@@ -124,8 +193,8 @@ const Billing = () => {
                       <Badge variant="outline" className={`text-[10px] mt-1 ${statusStyle[table.status]}`}>
                         {table.status}
                       </Badge>
-                      {table.bill > 0 && (
-                        <p className="text-xs mt-1 font-medium">₹{table.bill}</p>
+                      {tableBills[table.id - 1] > 0 && (
+                        <p className="text-xs mt-1 font-medium">₹{tableBills[table.id - 1]}</p>
                       )}
                     </button>
                   ))}
@@ -137,7 +206,7 @@ const Billing = () => {
           <Card className="shadow-card">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-base">Bill - Table {selectedTable}</CardTitle>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" onClick={handlePrint}>
                 <Printer className="h-4 w-4" />
               </Button>
             </CardHeader>
@@ -148,7 +217,7 @@ const Billing = () => {
               </div>
 
               <div className="space-y-2">
-                {billItems.map((item, i) => (
+                {currentBillItems.map((item, i) => (
                   <div key={i} className="flex justify-between text-sm py-2 border-b last:border-0">
                     <div>
                       <p className="font-medium">{item.name}</p>
@@ -178,8 +247,8 @@ const Billing = () => {
               </div>
 
               <div className="grid grid-cols-2 gap-2">
-                <Button variant="outline">Split Bill</Button>
-                <Button className="gradient-warm text-primary-foreground">Pay Now</Button>
+                <Button variant="outline" onClick={handleSplitBill}>Split Bill</Button>
+                <Button className="gradient-warm text-primary-foreground" onClick={handlePayNow}>Pay Now</Button>
               </div>
             </CardContent>
           </Card>
