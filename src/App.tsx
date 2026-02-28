@@ -23,6 +23,15 @@ const queryClient = new QueryClient();
 
 const getRole = () => localStorage.getItem("userRole");
 
+const WelcomePage = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="bg-white p-8 rounded shadow text-center">
+      <h2 className="text-2xl font-bold text-blue-700 mb-2">Welcome!</h2>
+      <p className="text-gray-700">You are logged in as <span className="font-semibold">{getRole()}</span>. No dashboard is assigned for this role.</p>
+    </div>
+  </div>
+);
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -35,7 +44,7 @@ const App = () => (
             getRole() === "admin" ? <Index /> : <AdminLogin />
           } />
           <Route path="/billing" element={
-            ["admin", "manager"].includes(getRole()) ? <Billing /> : <AdminLogin />
+            getRole() === "admin" ? <Billing /> : <AdminLogin />
           } />
           <Route path="/payroll" element={
             getRole() === "admin" ? <Payroll /> : <AdminLogin />
@@ -47,7 +56,7 @@ const App = () => (
             getRole() === "admin" ? <MenuManagement /> : <AdminLogin />
           } />
           <Route path="/orders" element={
-            ["admin", "staff"].includes(getRole()) ? <Orders /> : <AdminLogin />
+            getRole() === "admin" ? <Orders /> : <AdminLogin />
           } />
           <Route path="/inventory" element={
             getRole() === "admin" ? <Inventory /> : <AdminLogin />
@@ -56,7 +65,7 @@ const App = () => (
             getRole() === "admin" ? <CRM /> : <AdminLogin />
           } />
           <Route path="/reports" element={
-            ["admin", "manager"].includes(getRole()) ? <Reports /> : <AdminLogin />
+            getRole() === "admin" ? <Reports /> : <AdminLogin />
           } />
           <Route path="/recipe-management" element={
             getRole() === "admin" ? <RecipeManagement /> : <AdminLogin />
@@ -65,7 +74,7 @@ const App = () => (
             getRole() === "admin" ? <AdminUsers /> : <AdminLogin />
           } />
           <Route path="/my-profile" element={
-            getRole() ? <MyProfile /> : <AdminLogin />
+            getRole() === "admin" ? <MyProfile /> : <AdminLogin />
           } />
           <Route path="/super-admin-dashboard" element={
             getRole() === "admin" ? <SuperAdminDashboard /> : <AdminLogin />

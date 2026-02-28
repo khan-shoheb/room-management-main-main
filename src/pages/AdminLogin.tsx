@@ -3,38 +3,22 @@ import { useNavigate } from "react-router-dom";
 
 const DEMO_USERNAME = "admin";
 const DEMO_PASSWORD = "demo123";
-
-// 5-star hotel image (luxurious)
 const HOTEL_IMAGE = "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80";
-
-const ROLES = [
-  { label: "Admin", value: "admin" },
-  { label: "Manager", value: "manager" },
-  { label: "Staff", value: "staff" },
-];
-
-const DEMO_CREDENTIALS = {
-  admin: { username: "admin", password: "demo123" },
-  manager: { username: "manager", password: "demo123" },
-  staff: { username: "staff", password: "demo123" },
-};
 
 const AdminLogin = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("admin");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const creds = DEMO_CREDENTIALS[role];
-    if (username === creds.username && password === creds.password) {
-      localStorage.setItem("isAdmin", role === "admin" ? "true" : "false");
-      localStorage.setItem("userRole", role);
+    if (username.trim() === DEMO_USERNAME && password.trim() === DEMO_PASSWORD) {
+      localStorage.setItem("isAdmin", "true");
+      localStorage.setItem("userRole", "admin");
       window.location.href = "/"; // Force reload to show dashboard
     } else {
-      setError("Invalid username or password for selected role");
+      setError("Invalid username or password");
     }
   };
 
@@ -55,22 +39,10 @@ const AdminLogin = () => {
             </svg>
           </div>
           <h2 className="text-2xl font-bold mb-1 text-blue-700 tracking-wide">Admin Login</h2>
-          <div className="text-xs text-gray-500">Demo Username: <span className="font-semibold text-blue-600">{DEMO_CREDENTIALS[role].username}</span></div>
-          <div className="text-xs text-gray-500 mb-2">Demo Password: <span className="font-semibold text-blue-600">{DEMO_CREDENTIALS[role].password}</span></div>
+          <div className="text-xs text-gray-500">Demo Username: <span className="font-semibold text-blue-600">admin</span></div>
+          <div className="text-xs text-gray-500 mb-2">Demo Password: <span className="font-semibold text-blue-600">demo123</span></div>
         </div>
         {error && <div className="mb-4 text-red-600 text-sm text-center">{error}</div>}
-        <div className="mb-4">
-          <label className="block mb-1 font-semibold text-gray-700">Role</label>
-          <select
-            className="w-full border border-blue-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
-            value={role}
-            onChange={e => setRole(e.target.value)}
-          >
-            {ROLES.map(r => (
-              <option key={r.value} value={r.value}>{r.label}</option>
-            ))}
-          </select>
-        </div>
         <div className="mb-4">
           <label className="block mb-1 font-semibold text-gray-700">Username</label>
           <input
