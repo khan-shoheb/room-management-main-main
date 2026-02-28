@@ -17,7 +17,7 @@ export default function SuperAdminDashboard() {
   const handleLogout = () => {
     localStorage.removeItem("isSuperAdmin");
     localStorage.removeItem("userRole");
-    window.location.href = "/superadmin-login";
+    window.location.href = "/admin-login";
   };
   return (
     <div className="min-h-screen flex bg-gray-100">
