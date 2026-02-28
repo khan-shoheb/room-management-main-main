@@ -1,6 +1,8 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { NotificationBell, ThemeToggle, AISuggestionPanel } from "@/components/StatCard";
+import { UserCog } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -14,8 +16,13 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               <NotificationBell />
               <ThemeToggle />
               <AISuggestionPanel />
-              <div className="h-8 w-8 rounded-full gradient-warm flex items-center justify-center text-xs font-bold text-primary-foreground">
-                A
+              <div className="flex items-center gap-2">
+                <Link to="/my-profile" className="flex items-center gap-2 hover:underline">
+                  <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center">
+                    <UserCog className="h-5 w-5 text-white" />
+                  </div>
+                  <span className="font-semibold text-blue-700 text-sm">Admin</span>
+                </Link>
               </div>
             </div>
           </header>

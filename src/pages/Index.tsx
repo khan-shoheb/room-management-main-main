@@ -20,6 +20,7 @@ import {
   LineChart,
   Line,
 } from "recharts";
+import React from "react";
 
 const revenueData = [
   { day: "Mon", revenue: 12400 },
@@ -76,12 +77,34 @@ const profitData = revenueData.map((r, i) => ({
 }));
 
 const Dashboard = () => {
+  const userRole = localStorage.getItem("userRole");
+  const rolePermissions = {
+    admin: "Full access to all modules",
+    manager: "Access to Billing and Reports only",
+    staff: "Access to Orders only",
+  };
+  const handleLogout = () => {
+    localStorage.removeItem("isAdmin");
+    window.location.href = "/admin-login";
+  };
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground">Welcome back! Here's your restaurant overview.</p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold">Dashboard</h1>
+            <p className="text-muted-foreground">Welcome back! Here's your restaurant overview.</p>
+            <div className="mt-2 text-sm text-blue-700 font-semibold">
+              Role: {userRole ? userRole.charAt(0).toUpperCase() + userRole.slice(1) : "Unknown"} <br />
+              Permissions: {rolePermissions[userRole] || "No permissions"}
+            </div>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="bg-red-600 text-white px-4 py-2 rounded font-semibold hover:bg-red-700 transition"
+          >
+            Logout
+          </button>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

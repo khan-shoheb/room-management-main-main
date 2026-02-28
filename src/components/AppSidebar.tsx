@@ -8,6 +8,7 @@ import {
   ShoppingCart,
   ChefHat,
   BookOpen,
+  UserCog // <-- Add this import
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -42,6 +43,7 @@ export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
+  const userRole = localStorage.getItem("userRole");
 
   return (
     <Sidebar collapsible="icon">
@@ -78,6 +80,22 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              {/* Super Admin Dashboard link for admin only */}
+              {userRole === "admin" && (
+                <SidebarMenuItem key="SuperAdminDashboard">
+                  <SidebarMenuButton asChild isActive={location.pathname === "/super-admin-dashboard"}>
+                    <NavLink
+                      to="/super-admin-dashboard"
+                      end
+                      className="hover:bg-sidebar-accent"
+                      activeClassName="bg-sidebar-accent text-sidebar-primary font-medium"
+                    >
+                      <UserCog className="mr-2 h-4 w-4" />
+                      {!collapsed && <span>Super Admin Dashboard</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
