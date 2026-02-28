@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Home, Building, CreditCard, Users, BarChart2, Settings, LifeBuoy } from "lucide-react";
 
 const sidebarItems = [
@@ -13,6 +14,11 @@ const sidebarItems = [
 ];
 
 export default function SuperAdminDashboard() {
+  const handleLogout = () => {
+    localStorage.removeItem("isSuperAdmin");
+    localStorage.removeItem("userRole");
+    window.location.href = "/superadmin-login";
+  };
   return (
     <div className="min-h-screen flex bg-gray-100">
       {/* Sidebar */}
@@ -29,12 +35,6 @@ export default function SuperAdminDashboard() {
       </aside>
       {/* Main Content */}
       <main className="flex-1 p-10">
-    import { useNavigate } from "react-router-dom";
-    const handleLogout = () => {
-      localStorage.removeItem("isSuperAdmin");
-      localStorage.removeItem("userRole");
-      window.location.href = "/superadmin-login";
-    };
         <h1 className="text-3xl font-bold text-blue-800 mb-8">Super Admin Dashboard</h1>
           <div className="flex justify-between items-center mb-8">
             <button
