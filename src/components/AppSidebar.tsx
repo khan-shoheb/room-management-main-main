@@ -8,7 +8,7 @@ import {
   ShoppingCart,
   ChefHat,
   BookOpen,
-  UserCog // <-- Add this import
+  UserCog, // <-- Add this import
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -25,6 +25,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { SupportStatCard } from "@/components/StatCard";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const menuItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
@@ -40,10 +41,40 @@ const menuItems = [
 ];
 
 export function AppSidebar() {
-  const { state } = useSidebar();
+  const { state, openMobile, setOpenMobile } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
   const userRole = localStorage.getItem("userRole");
+  const isMobile = useIsMobile();
+
+  // Swipe gesture for mobile sidebar
+  React.useEffect(() => {
+    if (!isMobile) return;
+    let startX = null;
+    function handleTouchStart(e) {
+      startX = e.touches[0].clientX;
+    }
+    function handleTouchMove(e) {
+      if (startX === null) return;
+      const currentX = e.touches[0].clientX;
+      // Swipe right to open
+      if (currentX - startX > 60) {
+        setOpenMobile(true);
+        startX = null;
+      }
+      // Swipe left to close
+      if (startX - currentX > 60) {
+        setOpenMobile(false);
+        startX = null;
+      }
+    }
+    window.addEventListener("touchstart", handleTouchStart);
+    window.addEventListener("touchmove", handleTouchMove);
+    return () => {
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
+  }, [isMobile, setOpenMobile]);
 
   return (
     <Sidebar collapsible="icon">
