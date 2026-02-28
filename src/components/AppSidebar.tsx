@@ -7,6 +7,7 @@ import {
   Package,
   ShoppingCart,
   ChefHat,
+  BookOpen,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -22,6 +23,7 @@ import {
   SidebarHeader,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { SupportStatCard } from "@/components/StatCard";
 
 const menuItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
@@ -33,6 +35,7 @@ const menuItems = [
   { title: "Inventory", url: "/inventory", icon: Package },
   { title: "CRM", url: "/crm", icon: Users },
   { title: "Reports", url: "/reports", icon: BarChart3 },
+  { title: "Recipe Management", url: "/recipe-management", icon: BookOpen },
 ];
 
 export function AppSidebar() {
@@ -79,6 +82,18 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      {!collapsed && (
+        <div className="mt-auto mb-4 flex justify-center">
+          <div className="p-0 w-[90%] flex items-center gap-3">
+            <img src="/support247.svg" alt="24/7 Support Icon" width={24} height={24} />
+            <div>
+              <p className="text-xs text-muted-foreground mb-1">Support</p>
+              <p className="text-sm font-semibold">24/7 multiple language support</p>
+              <p className="text-xs text-muted-foreground mt-1">Call us anytime for help!</p>
+            </div>
+          </div>
+        </div>
+      )}
     </Sidebar>
   );
 }

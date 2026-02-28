@@ -56,6 +56,25 @@ const statusColor: Record<string, string> = {
   Pending: "bg-muted text-muted-foreground",
 };
 
+const expenseData = [
+  { day: "Mon", expense: 9000, staff: 3500, rent: 2000, inventory: 3500 },
+  { day: "Tue", expense: 11000, staff: 4000, rent: 2000, inventory: 5000 },
+  { day: "Wed", expense: 9500, staff: 3500, rent: 2000, inventory: 4000 },
+  { day: "Thu", expense: 13000, staff: 4500, rent: 2000, inventory: 6500 },
+  { day: "Fri", expense: 16000, staff: 5000, rent: 2000, inventory: 9000 },
+  { day: "Sat", expense: 20000, staff: 6000, rent: 2000, inventory: 12000 },
+  { day: "Sun", expense: 17000, staff: 5500, rent: 2000, inventory: 9500 },
+];
+const profitData = revenueData.map((r, i) => ({
+  day: r.day,
+  revenue: r.revenue,
+  expense: expenseData[i].expense,
+  profit: r.revenue - expenseData[i].expense,
+  staff: expenseData[i].staff,
+  rent: expenseData[i].rent,
+  inventory: expenseData[i].inventory,
+}));
+
 const Dashboard = () => {
   return (
     <DashboardLayout>
@@ -149,7 +168,37 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </div>
-
+        {/* Profit vs Expense Chart */}
+        <Card className="shadow-card animate-fade-in w-full mb-4">
+          <CardHeader><CardTitle className="text-base">Profit vs Expense</CardTitle></CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={profitData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px" }} />
+                <Bar dataKey="revenue" fill="#34d399" name="Revenue" />
+                <Bar dataKey="expense" fill="#f87171" name="Expense" />
+                <Bar dataKey="profit" fill="#fbbf24" name="Net Profit" />
+              </BarChart>
+            </ResponsiveContainer>
+            <div className="mt-4">
+              <h4 className="font-semibold mb-2">Expense Breakdown</h4>
+              <ResponsiveContainer width="100%" height={100}>
+                <BarChart data={profitData} layout="vertical">
+                  <XAxis type="number" hide />
+                  <YAxis dataKey="day" type="category" width={40} />
+                  <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px" }} />
+                  <Bar dataKey="staff" stackId="a" fill="#60a5fa" name="Staff" />
+                  <Bar dataKey="rent" stackId="a" fill="#fbbf24" name="Rent" />
+                  <Bar dataKey="inventory" stackId="a" fill="#f87171" name="Inventory" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+        {/* Recent Orders Table */}
         <Card className="shadow-card animate-slide-up">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base">Recent Orders</CardTitle>
